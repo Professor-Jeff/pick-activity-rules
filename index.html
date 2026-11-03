@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pick Activity — The if/else Program</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --ink: #1c1e21; --muted: #6b7280;
+    --line: #e5e7eb; --accent: #2563eb; --ok: #16a34a; --warn: #d97706;
+    --kw: #7c3aed; --str: #15803d; --num: #b45309;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 72px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 20px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .card h2 { font-size: 1rem; margin: 0 0 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 4px; }
+  input[type=range] { width: 100%; margin: 0 0 18px; }
+  code { background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+  .rules { margin-top: 14px; padding: 10px 12px; background: var(--bg); border-radius: 8px; font-size: .95rem; line-height: 1.45; }
+  .note { font-size: .85rem; color: var(--muted); margin-top: 10px; line-height: 1.45; }
+  button { font: inherit; padding: 10px 18px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); cursor: pointer; margin-right: 8px; }
+
+  /* the program, with the branch that runs lit up */
+  pre { margin: 0; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .86rem; line-height: 1.5; }
+  .code { background: var(--bg); border-radius: 8px; padding: 12px 10px; overflow-x: auto; }
+  .code .ln { white-space: pre; }
+  .code .branch { position: relative; border-radius: 6px; padding: 2px 6px; margin: 2px -6px; transition: background .15s, opacity .15s; }
+  .code .branch.run { background: #dcfce7; }
+  .code .branch.run .ln { font-weight: 700; }
+  .code .branch.skip { opacity: .45; }
+  .code .gap { height: .75em; }
+  .kw { color: var(--kw); font-weight: 600; }
+  .str { color: var(--str); }
+  .num { color: var(--num); }
+  .fn { color: var(--accent); }
+  .badge { position: absolute; right: 8px; top: 5px; font-family: system-ui, sans-serif; font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; background: var(--line); color: var(--muted); }
+  .badge.t { background: var(--ok); color: #fff; }
+  .badge.f { background: #fee2e2; color: #b91c1c; }
+  @media (max-width: 480px) { .badge { position: static; display: inline-block; margin: 0 0 2px; } }
+
+  /* what the program prints */
+  .term { background: #1c1e21; color: #e5e7eb; border-radius: 8px; padding: 14px 16px; font-size: .9rem; line-height: 1.7; white-space: pre-wrap; }
+  .term .typed { color: #93c5fd; }
+  .term .out { color: #4ade80; font-weight: 700; font-size: 1.15rem; }
+  .term .cursor { display: inline-block; width: .55em; height: 1.1em; background: #e5e7eb; vertical-align: text-bottom; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* QR code for presentations (lower left) */
+  #qrBtn { position: fixed; left: 16px; bottom: 16px; z-index: 20; margin: 0; font-size: .85rem; padding: 8px 14px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+  #qrPanel { position: fixed; left: 16px; bottom: 64px; z-index: 20; display: none; flex-direction: column; align-items: center; gap: 8px; padding: 16px 20px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.14); }
+  #qrPanel.open { display: flex; }
+  #qrPanel .qrTitle { font-size: 1rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  #qrPanel svg { width: 220px; height: 220px; border: 8px solid #fff; background: #fff; display: block; }
+  #qrPanel .qrUrl { font-size: .85rem; color: var(--muted); letter-spacing: .03em; }
+  @media (max-width: 700px) { #qrPanel svg { width: 160px; height: 160px; } }
+  /* previous / next links through the demo series */
+  .series { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: .9rem; color: var(--muted); margin: 0 0 14px; }
+  .series a { color: var(--accent); text-decoration: none; font-weight: 600; white-space: nowrap; }
+  .series a:hover, .series a:focus-visible { text-decoration: underline; }
+  .series.bottom { margin: 28px 0 0; padding-top: 14px; border-top: 1px solid var(--line); }
+  @media (max-width: 600px) { .series { flex-wrap: wrap; } .series > span { order: 3; width: 100%; text-align: center; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="series" aria-label="Neural network demo series"><span></span><span>Part 1 of 5 · neural network demos</span><a href="https://professor-jeff.github.io/pick-activity/" title="Next demo in the series">Next: Pick Activity →</a></nav>
+  <h1>Pick Activity: the if/else program</h1>
+  <p class="sub">Two numbers in, one answer out. The sliders stand in for typing at the two <code>input()</code> prompts. Slide them and watch which branch of the program runs.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Inputs</h2>
+      <label>Temperature <span id="tempVal">72 °F</span></label>
+      <input type="range" id="temp" min="0" max="100" value="72">
+      <label>Chance of rain <span id="rainVal">20 %</span></label>
+      <input type="range" id="rain" min="0" max="100" value="20">
+
+      <h2>The program prints</h2>
+      <pre class="term"><span class="prompt">What is the chance of rain, 0-100? </span><span class="typed" id="tRain">20</span>
+<span class="prompt">What is the temperature? </span><span class="typed" id="tTemp">72</span>
+<span class="out" id="tOut">Go Running</span><span class="cursor"></span></pre>
+      <div class="rules" id="explain"></div>
+      <p class="note">In the real program, <code>input()</code> stops and waits for you to type a number. <code>int()</code> turns what you typed into a whole number so it can be compared with <code>&gt;=</code> and <code>&lt;</code>.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Python program</h2>
+      <pre class="code" id="code"><div class="ln">rain = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"What is the chance of rain, 0-100? "</span> ))</div><div class="ln">temp = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"What is the temperature? "</span> ))</div><div class="gap"></div><div class="branch" id="b0"><span class="badge" id="g0"></span><div class="ln"><span class="kw">if</span> temp &gt;= <span class="num">80</span> <span class="kw">and</span> rain &lt; <span class="num">50</span> :</div><div class="ln">  <span class="fn">print</span>(<span class="str">"Play VolleyBall"</span> )</div></div><div class="gap"></div><div class="branch" id="b1"><span class="badge" id="g1"></span><div class="ln"><span class="kw">elif</span> temp &gt;= <span class="num">80</span> <span class="kw">and</span> rain &gt;= <span class="num">50</span> :</div><div class="ln">  <span class="fn">print</span>(<span class="str">"See a Movie"</span> )</div></div><div class="gap"></div><div class="branch" id="b2"><span class="badge" id="g2"></span><div class="ln"><span class="kw">elif</span> temp &gt;= <span class="num">32</span> <span class="kw">and</span> temp &lt; <span class="num">80</span> <span class="kw">and</span> rain &lt; <span class="num">50</span> :</div><div class="ln">  <span class="fn">print</span>(<span class="str">"Go Running"</span> )</div></div><div class="gap"></div><div class="branch" id="b3"><span class="badge" id="g3"></span><div class="ln"><span class="kw">elif</span> temp &gt;= <span class="num">32</span> <span class="kw">and</span> temp &lt; <span class="num">80</span> <span class="kw">and</span> rain &gt;= <span class="num">50</span> :</div><div class="ln">  <span class="fn">print</span>(<span class="str">"Go Running"</span> )</div></div><div class="gap"></div><div class="branch" id="b4"><span class="badge" id="g4"></span><div class="ln"><span class="kw">else</span>:</div><div class="ln">  <span class="fn">print</span>(<span class="str">"Read a Book"</span> )</div></div></pre>
+      <p class="note">Python reads the conditions from the top and runs the <b>first</b> one that is <b>True</b>. Everything after it is skipped without being checked. If none are True, the <code>else</code> runs.</p>
+    </div>
+  </div>
+
+  <p class="sub" style="margin-top:18px">
+    Every rule on this page was typed by a person who already knew the answer.
+    On the next page the computer is given only examples, a temperature, a chance of rain, and what this program printed, and has to discover the rules on its own.
+    Try sliding to exactly 80°, exactly 32°, or exactly 50% rain and watch which branch flips.
+  </p>
+  <nav class="series bottom" aria-label="Neural network demo series"><span></span><span>Part 1 of 5 · neural network demos</span><a href="https://professor-jeff.github.io/pick-activity/" title="Next demo in the series">Next: Pick Activity →</a></nav>
+</div>
+
+<button id="qrBtn" type="button" aria-expanded="false" aria-controls="qrPanel">Show QR code</button>
+<div id="qrPanel" role="dialog" aria-label="QR code for this page">
+  <div class="qrTitle">Scan to try it</div>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33" shape-rendering="crispEdges" role="img" aria-label="QR code for https://professor-jeff.github.io/pick-activity-rules/"><rect width="33" height="33" fill="#fff"/><path fill="#000" d="M0 0h7v1h-7zM11 0h2v1h-2zM17 0h7v1h-7zM26 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM10 1h2v1h-2zM15 1h1v1h-1zM17 1h1v1h-1zM21 1h2v1h-2zM26 1h1v1h-1zM32 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h1v1h-1zM14 2h1v1h-1zM19 2h3v1h-3zM26 2h1v1h-1zM28 2h3v1h-3zM32 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h2v1h-2zM11 3h1v1h-1zM15 3h1v1h-1zM18 3h1v1h-1zM22 3h1v1h-1zM26 3h1v1h-1zM28 3h3v1h-3zM32 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM8 4h1v1h-1zM10 4h1v1h-1zM12 4h5v1h-5zM18 4h2v1h-2zM21 4h3v1h-3zM26 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM11 5h4v1h-4zM17 5h1v1h-1zM20 5h1v1h-1zM26 5h1v1h-1zM32 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h7v1h-7zM8 7h2v1h-2zM12 7h1v1h-1zM16 7h1v1h-1zM18 7h2v1h-2zM21 7h2v1h-2zM24 7h1v1h-1zM0 8h1v1h-1zM2 8h5v1h-5zM10 8h5v1h-5zM17 8h2v1h-2zM22 8h3v1h-3zM26 8h5v1h-5zM0 9h3v1h-3zM4 9h2v1h-2zM9 9h1v1h-1zM11 9h3v1h-3zM16 9h5v1h-5zM22 9h2v1h-2zM26 9h2v1h-2zM29 9h4v1h-4zM0 10h1v1h-1zM3 10h1v1h-1zM6 10h1v1h-1zM8 10h2v1h-2zM12 10h6v1h-6zM20 10h2v1h-2zM24 10h1v1h-1zM28 10h1v1h-1zM30 10h2v1h-2zM1 11h1v1h-1zM3 11h2v1h-2zM7 11h1v1h-1zM10 11h2v1h-2zM13 11h1v1h-1zM15 11h4v1h-4zM20 11h4v1h-4zM25 11h1v1h-1zM28 11h5v1h-5zM0 12h7v1h-7zM10 12h1v1h-1zM14 12h3v1h-3zM20 12h1v1h-1zM24 12h2v1h-2zM27 12h3v1h-3zM31 12h2v1h-2zM0 13h1v1h-1zM2 13h1v1h-1zM5 13h1v1h-1zM7 13h1v1h-1zM9 13h1v1h-1zM13 13h1v1h-1zM15 13h1v1h-1zM17 13h5v1h-5zM23 13h1v1h-1zM26 13h1v1h-1zM30 13h3v1h-3zM1 14h1v1h-1zM3 14h2v1h-2zM6 14h3v1h-3zM10 14h3v1h-3zM15 14h3v1h-3zM20 14h1v1h-1zM24 14h3v1h-3zM30 14h2v1h-2zM2 15h3v1h-3zM8 15h1v1h-1zM11 15h1v1h-1zM13 15h1v1h-1zM15 15h1v1h-1zM18 15h1v1h-1zM20 15h4v1h-4zM25 15h2v1h-2zM28 15h3v1h-3zM0 16h3v1h-3zM6 16h1v1h-1zM9 16h2v1h-2zM12 16h1v1h-1zM15 16h3v1h-3zM22 16h1v1h-1zM24 16h2v1h-2zM27 16h2v1h-2zM32 16h1v1h-1zM1 17h3v1h-3zM5 17h1v1h-1zM7 17h4v1h-4zM13 17h2v1h-2zM16 17h1v1h-1zM18 17h3v1h-3zM23 17h1v1h-1zM25 17h3v1h-3zM29 17h2v1h-2zM32 17h1v1h-1zM1 18h2v1h-2zM4 18h4v1h-4zM10 18h1v1h-1zM13 18h1v1h-1zM15 18h1v1h-1zM18 18h1v1h-1zM21 18h2v1h-2zM27 18h2v1h-2zM30 18h1v1h-1zM7 19h3v1h-3zM12 19h4v1h-4zM19 19h1v1h-1zM21 19h3v1h-3zM25 19h8v1h-8zM1 20h2v1h-2zM5 20h4v1h-4zM13 20h2v1h-2zM18 20h2v1h-2zM22 20h2v1h-2zM25 20h1v1h-1zM27 20h3v1h-3zM31 20h2v1h-2zM0 21h3v1h-3zM4 21h2v1h-2zM8 21h1v1h-1zM10 21h2v1h-2zM13 21h1v1h-1zM15 21h2v1h-2zM19 21h2v1h-2zM22 21h2v1h-2zM25 21h3v1h-3zM32 21h1v1h-1zM0 22h1v1h-1zM2 22h2v1h-2zM6 22h1v1h-1zM9 22h1v1h-1zM12 22h1v1h-1zM14 22h1v1h-1zM17 22h1v1h-1zM22 22h1v1h-1zM28 22h4v1h-4zM0 23h1v1h-1zM2 23h3v1h-3zM7 23h3v1h-3zM11 23h2v1h-2zM16 23h1v1h-1zM20 23h3v1h-3zM24 23h1v1h-1zM27 23h5v1h-5zM0 24h1v1h-1zM2 24h1v1h-1zM4 24h1v1h-1zM6 24h3v1h-3zM10 24h1v1h-1zM12 24h1v1h-1zM17 24h1v1h-1zM19 24h1v1h-1zM22 24h7v1h-7zM31 24h1v1h-1zM8 25h2v1h-2zM11 25h4v1h-4zM16 25h7v1h-7zM24 25h1v1h-1zM28 25h1v1h-1zM30 25h1v1h-1zM32 25h1v1h-1zM0 26h7v1h-7zM11 26h1v1h-1zM13 26h1v1h-1zM15 26h1v1h-1zM17 26h1v1h-1zM20 26h1v1h-1zM23 26h2v1h-2zM26 26h1v1h-1zM28 26h1v1h-1zM30 26h2v1h-2zM0 27h1v1h-1zM6 27h1v1h-1zM8 27h3v1h-3zM13 27h1v1h-1zM15 27h4v1h-4zM20 27h2v1h-2zM23 27h2v1h-2zM28 27h4v1h-4zM0 28h1v1h-1zM2 28h3v1h-3zM6 28h1v1h-1zM8 28h2v1h-2zM11 28h1v1h-1zM14 28h3v1h-3zM19 28h1v1h-1zM22 28h1v1h-1zM24 28h6v1h-6zM32 28h1v1h-1zM0 29h1v1h-1zM2 29h3v1h-3zM6 29h1v1h-1zM8 29h1v1h-1zM11 29h1v1h-1zM13 29h3v1h-3zM17 29h6v1h-6zM25 29h1v1h-1zM28 29h1v1h-1zM30 29h3v1h-3zM0 30h1v1h-1zM2 30h3v1h-3zM6 30h1v1h-1zM8 30h2v1h-2zM12 30h5v1h-5zM18 30h1v1h-1zM20 30h1v1h-1zM24 30h4v1h-4zM29 30h1v1h-1zM0 31h1v1h-1zM6 31h1v1h-1zM9 31h1v1h-1zM13 31h3v1h-3zM20 31h2v1h-2zM25 31h1v1h-1zM28 31h3v1h-3zM0 32h7v1h-7zM8 32h2v1h-2zM13 32h1v1h-1zM15 32h3v1h-3zM23 32h2v1h-2zM27 32h1v1h-1zM31 32h1v1h-1z"/></svg>
+  <div class="qrUrl">professor-jeff.github.io/pick-activity-rules</div>
+</div>
+
+<script>
+// ---------------------------------------------------------------------------
+// The same program, one branch per entry, in the same order Python checks them.
+// cond: null means the else branch (no condition to check).
+// ---------------------------------------------------------------------------
+const BRANCHES = [
+  { cond: (temp, rain) => temp >= 80 && rain < 50,               out: "Play VolleyBall" },
+  { cond: (temp, rain) => temp >= 80 && rain >= 50,              out: "See a Movie" },
+  { cond: (temp, rain) => temp >= 32 && temp < 80 && rain < 50,  out: "Go Running" },
+  { cond: (temp, rain) => temp >= 32 && temp < 80 && rain >= 50, out: "Go Running" },
+  { cond: null,                                                  out: "Read a Book" },
+];
+
+const $ = id => document.getElementById(id);
+const ORD = ["first", "second", "third", "fourth"];
+
+function run() {
+  const temp = +$("temp").value, rain = +$("rain").value;
+  $("tempVal").textContent = `${temp} °F`;
+  $("rainVal").textContent = `${rain} %`;
+  $("tRain").textContent = rain;
+  $("tTemp").textContent = temp;
+
+  // walk the branches top to bottom, exactly as Python does
+  let taken = -1;
+  BRANCHES.forEach((b, k) => {
+    const el = $(`b${k}`), g = $(`g${k}`);
+    el.className = "branch";
+    if (taken >= 0) {                        // a branch above already ran
+      el.classList.add("skip"); g.className = "badge"; g.textContent = "not checked";
+    } else if (b.cond === null) {            // else: nothing above was True
+      taken = k; el.classList.add("run"); g.className = "badge t"; g.textContent = "runs";
+    } else if (b.cond(temp, rain)) {
+      taken = k; el.classList.add("run"); g.className = "badge t"; g.textContent = "True → runs";
+    } else {
+      g.className = "badge f"; g.textContent = "False";
+    }
+  });
+
+  $("tOut").textContent = BRANCHES[taken].out;
+
+  let why;
+  if (taken === 0) why = `With temp = ${temp} and rain = ${rain}, the first condition is True, so Python prints <b>${BRANCHES[0].out}</b> and never checks the rest.`;
+  else if (taken < 4) why = `With temp = ${temp} and rain = ${rain}, the ${ORD.slice(0, taken).join(taken === 2 ? " and " : ", ").replace(/, (\w+)$/, " and $1")} condition${taken > 1 ? "s are" : " is"} False and the ${ORD[taken]} is True, so Python prints <b>${BRANCHES[taken].out}</b> and never checks the rest.`;
+  else why = `With temp = ${temp} and rain = ${rain}, all four conditions are False, so Python falls through to <code>else</code> and prints <b>${BRANCHES[4].out}</b>.`;
+  $("explain").innerHTML = why;
+}
+
+$("temp").addEventListener("input", run);
+$("rain").addEventListener("input", run);
+run();
+
+// QR code toggle (lower left)
+$("qrBtn").addEventListener("click", () => {
+  const open = $("qrPanel").classList.toggle("open");
+  $("qrBtn").setAttribute("aria-expanded", open);
+  $("qrBtn").textContent = open ? "Hide QR code" : "Show QR code";
+});
+</script>
+</body>
+</html>
