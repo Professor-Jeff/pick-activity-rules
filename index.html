@@ -69,6 +69,14 @@
   #talkTimer.warn { color: #d97706; }
   #talkTimer.over { color: #dc2626; }
   @media (max-width: 700px) { #talkTimer { display: none; } }
+  /* the rules as a table, above the sliders; the row the sliders land in lights up */
+  .rulesCard { margin-bottom: 16px; }
+  .rulesTbl { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  .rulesTbl th, .rulesTbl td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+  .rulesTbl th { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+  .rulesTbl tr.active td { background: #dcfce7; font-weight: 600; }
+  .rulesTbl td.v { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tblNote { font-size: .85rem; color: var(--muted); margin-top: 8px; line-height: 1.45; }
 </style>
 </head>
 <body>
@@ -76,6 +84,21 @@
   <nav class="series" aria-label="Neural network demo series"><a href="https://professor-jeff.github.io/what-is-ai/" title="Back to the title page">← Intro: What is AI?</a><span>Part 1 of 6 · neural network demos</span><a href="https://professor-jeff.github.io/pick-activity/" title="Next demo in the series">Next: Pick Activity →</a></nav>
   <h1>Pick Activity: the if/else program</h1>
   <p class="sub">Two numbers in, one answer out. The sliders stand in for typing at the two <code>input()</code> prompts. Slide them and watch which branch of the program runs.</p>
+
+  <div class="card rulesCard">
+    <h2>The rules</h2>
+    <table class="rulesTbl">
+      <thead><tr><th>Temperature</th><th>Chance of rain</th><th>Activity</th></tr></thead>
+      <tbody>
+        <tr id="rule0"><td class="v">≥ 80 °F</td><td class="v">&lt; 50 %</td><td>Play VolleyBall</td></tr>
+        <tr id="rule1"><td class="v">≥ 80 °F</td><td class="v">≥ 50 %</td><td>See a Movie</td></tr>
+        <tr id="rule2"><td class="v">32 – 79 °F</td><td class="v">&lt; 50 %</td><td>Go Running</td></tr>
+        <tr id="rule3"><td class="v">32 – 79 °F</td><td class="v">≥ 50 %</td><td>Try Yoga</td></tr>
+        <tr id="rule4"><td class="v">&lt; 32 °F</td><td class="v">any</td><td>Read a Book</td></tr>
+      </tbody>
+    </table>
+    <div class="tblNote">A person decided these five rules and typed them into the program below. The highlighted row is where the sliders land right now; the program reaches the same answer by checking the rules one line at a time, in order.</div>
+  </div>
 
   <div class="grid">
     <div class="card">
@@ -155,6 +178,7 @@ function run() {
   });
 
   $("tOut").textContent = BRANCHES[taken].out;
+  BRANCHES.forEach((_, k) => $(`rule${k}`).classList.toggle("active", k === taken));
 
   let why;
   if (taken === 0) why = `With temp = ${temp} and rain = ${rain}, the first condition is True, so Python prints <b>${BRANCHES[0].out}</b> and never checks the rest.`;
