@@ -143,7 +143,7 @@ function run() {
     } else if (b.cond === null) {            // else: nothing above was True
       taken = k; el.classList.add("run"); g.className = "badge t"; g.textContent = "runs";
     } else if (b.cond(temp, rain)) {
-      taken = k; el.classList.add("run"); g.className = "badge t"; g.textContent = "True → runs";
+      taken = k; el.classList.add("run"); g.className = "badge t"; g.textContent = "True";
     } else {
       g.className = "badge f"; g.textContent = "False";
     }
